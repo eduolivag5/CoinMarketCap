@@ -1,0 +1,80 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+/* Define variables globales */
+html, body {
+  width: 100%;
+  height: 100%;
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+::-webkit-scrollbar {
+  width: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #3b82df;
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-button {
+  display: none; /* Ocultar flechas */
+}
+
+:root {
+  --color-primary: #3861fb; /* Azul suave pero destacado */
+  --color-secondary: #e2e8f0; /* Un gris claro para elementos secundarios */
+  --color-background: #f7f9fc; /* Blanco roto o gris muy claro para evitar el blanco puro */
+  --color-text: #1b1d1f; /* Texto oscuro para un buen contraste */
+}
+
+.dark {
+  --color-primary: #3861fb;
+  --color-secondary: #1b1d1f;
+  --color-background: #111212;
+  --color-text: #f8fafc;
+}
+
+/* Asocia las variables a utilidades de Tailwind */
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-secondary {
+  background-color: var(--color-secondary);
+}
+
+.text-primary {
+  color: var(--color-primary);
+}
+
+.text-secondary {
+  color: var(--color-secondary);
+}
+
+.bg-background {
+  background-color: var(--color-background);
+}
+
+.text-text {
+  color: var(--color-text);
+}
