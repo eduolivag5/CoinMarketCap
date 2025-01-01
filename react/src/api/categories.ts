@@ -2,10 +2,11 @@ import axios, { isAxiosError } from "axios";
 import { CategoriesSchema, CategoryDetailsSchema } from "../types";
 import { getCryptoLogos } from "./coins";
 
+const urlBackend = import.meta.env.VITE_URL_BACKEND;
 
 export async function getCategories() {
     try {
-        const url = `https://coinmarketcap-api-l004.onrender.com/categories`;
+        const url = `${urlBackend}/categories`;
         const { data } = await axios.get(url);
 
         // Validación de la respuesta de la API usando Zod
@@ -29,7 +30,7 @@ export async function getCategories() {
 
 export async function getCategoryDetails(id: string) {
     try {
-        const url = `https://coinmarketcap-api-l004.onrender.com/categories/details`;
+        const url = `${urlBackend}/categories/details`;
         const params = { id };
         const { data } = await axios.get(url, { params });
 

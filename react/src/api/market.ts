@@ -1,10 +1,11 @@
 import axios, { isAxiosError } from "axios";
 import { FearAndGreedIndexSchema, GlobalMetricsSchema } from "../types";
 
+const urlBackend = import.meta.env.VITE_URL_BACKEND;
 
 export async function getFearAndGreedIndex() {
     try {
-        const url = `https://coinmarketcap-api-l004.onrender.com/fear-and-greed`;
+        const url = `${urlBackend}/fear-and-greed`;
         const { data } = await axios.get(url);
 
         // Validación de la respuesta de la API usando Zod
@@ -28,7 +29,7 @@ export async function getFearAndGreedIndex() {
 
 export async function getGlobalMetrics() {
     try {
-        const url = `https://coinmarketcap-api-l004.onrender.com/global-metrics`;
+        const url = `${urlBackend}/global-metrics`;
         const { data } = await axios.get(url);
 
         // Validación de la respuesta de la API usando Zod

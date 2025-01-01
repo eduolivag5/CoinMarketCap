@@ -1,9 +1,11 @@
 import axios, { isAxiosError } from "axios";
 import { CryptoDetailsSchema, CryptoListingsListSchema, CryptoQuotesDetailsSchema, CryptoQuotesListSchema, SearchSchema } from "../types";
 
+const urlBackend = import.meta.env.VITE_URL_BACKEND;
+
 export async function getTop100() {
     try {
-        const url = `https://coinmarketcap-api-l004.onrender.com/listings`; 
+        const url = `${urlBackend}/listings`; 
         const { data } = await axios.get(url);
 
         // Validación de la respuesta de la API usando Zod
@@ -40,7 +42,7 @@ export async function getTop100() {
 export async function getCryptoLogos(cryptoIds: number[]) {
     try {
         // Realizar una solicitud para obtener los detalles de las criptomonedas
-        const url = `https://coinmarketcap-api-l004.onrender.com/crypto/info/id`;
+        const url = `${urlBackend}/crypto/info/id`;
         const params = {
             id: cryptoIds.join(',')
         };
@@ -65,8 +67,8 @@ export async function getCryptoLogos(cryptoIds: number[]) {
 
 export async function getCryptoDetails(id: string) {
     try {
-        const detailsUrl = `https://coinmarketcap-api-l004.onrender.com/crypto/info/id`;
-        const quotesUrl = `https://coinmarketcap-api-l004.onrender.com/crypto/quotes/id`;
+        const detailsUrl = `${urlBackend}/crypto/info/id`;
+        const quotesUrl = `${urlBackend}/crypto/quotes/id`;
 
         const params = { id };
 
@@ -104,7 +106,7 @@ export async function getCryptoDetails(id: string) {
 
 export async function searchCoins(query: string) {
     try {
-        const url = `https://coinmarketcap-api-l004.onrender.com/crypto/map`; 
+        const url = `${urlBackend}/crypto/map`; 
         const params = { symbol: query };
         const { data } = await axios.get(url, { params });
 
@@ -155,7 +157,7 @@ export async function getCriptoListInfo(id: number[]) {
         
         const listaIds = id.join(',');
 
-        const url = `https://coinmarketcap-api-l004.onrender.com/crypto/quotes/id`;
+        const url = `${urlBackend}/crypto/quotes/id`;
         const params = { id: listaIds };
         const { data } = await axios.get(url, { params });
 
