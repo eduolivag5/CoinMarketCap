@@ -27,7 +27,7 @@ export default function Navbar() {
     const { theme, toggleTheme } = themeContext;
 
     return (
-        <header className="text-text bg-background px-4 md:px-8 py-3 md:py-2 text-sm drop-shadow-lg">
+        <header className={`fixed top-0 z-50 w-full text-text px-4 md:px-8 py-3 md:py-2 text-sm backdrop-blur-[3px] backdrop-saturate-[100%] ${theme === "dark" ? "bg-[#111212]" : "bg-[#e2e8f0]"} bg-opacity-90`}>
             <div className="flex items-center gap-6 justify-between">
                 
                 <div className="flex items-center gap-10">

@@ -2,6 +2,8 @@ import { AiOutlineLineChart } from 'react-icons/ai'
 import { BiSolidCategory } from 'react-icons/bi'
 import { FaHome, FaRegStar, FaSearch } from 'react-icons/fa'
 import MobileRouteLink from './MobileRouteLink'
+import { useContext } from 'react'
+import { ThemeContext } from '../../ThemeContext'
 
 const routes = [
     { href: '/', icon: <FaHome />, text: 'Home' },
@@ -14,8 +16,18 @@ const routes = [
 
 export default function NavMobile() {
 
+    const themeContext = useContext(ThemeContext);
+    
+    if (!themeContext) {
+        throw new Error('ThemeContext debe ser usado dentro de un ThemeProvider');
+    }
+
+    const { theme } = themeContext;
+
     return (
-        <div className={`md:hidden p-3 bg-background drop-shadow-lg flex justify-evenly items-center`}>
+        <div className={`md:hidden p-2 flex justify-evenly items-center fixed bottom-0 z-50 w-full backdrop-blur-[3px] backdrop-saturate-[100%] 
+            ${theme === "dark" ? "bg-[#111212]" : "bg-[#e2e8f0]"} bg-opacity-90`}
+        >
             {routes.map((route) => (
                 <MobileRouteLink key={route.href} href={route.href} icon={route.icon} text={route.text} />
             ))}
