@@ -12,7 +12,7 @@ export default {
         background: 'var(--color-background)', // Utiliza la variable CSS
         text: 'var(--color-text)', // Utiliza la variable CSS
         positive: '#15c783',
-        negative: '#b93139'
+        negative: '#cc4a51'
       },
     },
   },

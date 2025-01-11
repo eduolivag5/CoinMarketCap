@@ -9,7 +9,7 @@ export default function App() {
             <div className="flex flex-col h-[100dvh]">
                 <Navbar />
 
-                <div className="flex-1 overflow-y-auto bg-background text-text p-4 pt-16 md:p-8 md:pt-20 drop-shadow-lg">
+                <div className="flex-1 overflow-y-auto bg-background text-text p-4 pt-16 pb-20 md:p-8 md:pt-20 drop-shadow-lg">
                     <AppRoutes />
                 </div>
 

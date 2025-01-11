@@ -8,6 +8,8 @@ import Watchlist from './pages/Watchlist';
 import Metrics from './pages/Metrics';
 import Categories from './pages/Categories';
 import CategoryDetails from './pages/CategoryDetails';
+import Portfolio from './pages/Portfolio';
+import Transactions from './pages/Transactions';
 
 const AppRoutes: React.FC = () => {
     return (
@@ -19,6 +21,9 @@ const AppRoutes: React.FC = () => {
             <Route path="/global-metrics" element={<Metrics />} />
             <Route path="/categories" element={<Categories />} />
             <Route path="/categories/:id" element={<CategoryDetails />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/portfolio/transactions/:id" element={<Transactions />} />
         </Routes>
     );
 };

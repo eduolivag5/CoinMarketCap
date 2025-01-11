@@ -106,27 +106,28 @@ export const CryptoQuotesDetailsSchema = z.object({
 
 export type QuoteSchemaType = z.infer<typeof QuotesDetailsSchema>;
 
-
-const SearchItemsSchema = z.array(
-    z.object({
+const SearchItemSchema = z.object({
+    id: z.number(),
+    rank: z.number().nullable(),
+    name: z.string(),
+    symbol: z.string(),
+    slug: z.string(),
+    logo: z.string().optional(),
+    platform: z.object({
         id: z.number(),
-        rank: z.number().nullable(),
         name: z.string(),
         symbol: z.string(),
         slug: z.string(),
-        logo: z.string().optional(),
-        platform: z.object({
-            id: z.number(),
-            name: z.string(),
-            symbol: z.string(),
-            slug: z.string(),
-            token_address: z.string(),
-        }).nullable(),
-        quotes: QuoteSchema.optional()
-    })
-)
+        token_address: z.string(),
+    }).nullable(),
+    quotes: QuoteSchema.optional()
+})
+
+
+const SearchItemsSchema = z.array(SearchItemSchema)
 
 export type SearchItemsType = z.infer<typeof SearchItemsSchema>;
+export type SearchItemType = z.infer<typeof SearchItemSchema>;
 
 export const SearchSchema = z.object({
     status: StatusObjectSchema,
@@ -212,3 +213,11 @@ export const CategoryDetailsSchema = z.object({
 })
 
 export type CategoryDetailsType = z.infer<typeof CategoryDetailsSchema>
+
+export type PortfolioItem = {
+    coin: SearchItemType;
+    amount: number;
+    averagePrice: number;
+    totalValue: number;
+    totalInvested: number;
+}

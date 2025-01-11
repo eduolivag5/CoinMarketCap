@@ -13,6 +13,8 @@ export default function Watchlist() {
         queryFn: () => getCriptoListInfo(watchlist)
     })
 
+    console.log(data)
+
     return (
         <div className='space-y-4'>
             <h3 className="text-2xl font-bold">Lista de seguimiento</h3>

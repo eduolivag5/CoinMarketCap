@@ -12,9 +12,7 @@ export default function CriptoDetails() {
     const { data, isError, isLoading } = useQuery({
         queryKey: [`details-${id}`],
         queryFn: () => getCryptoDetails(id!),
-    });
-
-    
+    });    
 
     return (
         <div>

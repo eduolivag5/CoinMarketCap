@@ -1,3 +1,6 @@
+import { Transaction } from "../store/transactions";
+import { PortfolioItem } from "../types";
+
 export function formatNumber(number: number | string) {
   // Convertir el número a tipo numérico
   const numericValue = typeof number === 'string' ? parseFloat(number) : number;
@@ -56,4 +59,35 @@ export function getCoordinates(value: number, radius: number = 87) {
   const cy = 95 - radius * Math.sin(angle); 
 
   return { cx, cy };
+}
+
+
+export function convertTransactionsToPortfolio(transactions: Transaction[]) {
+  const grouped = transactions.reduce((acc: Record<string, PortfolioItem>, transaction) => {
+      const coinId = transaction.coin.id;
+
+      if (!acc[coinId]) {
+          acc[coinId] = {
+          coin: transaction.coin,
+          amount: 0,
+          averagePrice: 0,
+          totalValue: 0,
+          totalInvested: 0,
+          };
+      }
+
+      const current = acc[coinId];
+
+      // Actualizar los valores agrupados
+      current.amount += transaction.amount;
+      current.totalInvested += transaction.amount * transaction.price;
+      current.totalValue += transaction.amount * transaction.coin.quotes?.USD?.price!;
+
+      // Calcular el precio promedio
+      current.averagePrice = current.totalInvested / current.amount;
+
+      return acc;
+  }, {});
+
+  return Object.values(grouped);
 }

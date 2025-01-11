@@ -59,7 +59,7 @@ export default function CategoriesTable({ categories }: CategoriesTableProps) {
     return (
         <div className="w-full">
             {/* Paginación */}
-            <div className="my-4 flex items-center gap-2">
+            <div className="my-4 flex gap-2">
                 <input
                     type="text"
                     value={searchTerm}
@@ -68,7 +68,7 @@ export default function CategoriesTable({ categories }: CategoriesTableProps) {
                     className="flex-grow py-2 px-4 text-sm rounded bg-secondary focus:outline-none"
                 />
 
-                <div className="flex items-center gap-1">
+                <div className="flex gap-1">
                     <button
                         onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                         className="px-4 py-2 rounded bg-secondary"
