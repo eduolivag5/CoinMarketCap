@@ -8,6 +8,8 @@ interface TradingViewChartProps {
 
 export default function TradingViewChart ({ symbol } : TradingViewChartProps) {
 
+    symbol = `${symbol.toUpperCase()}USDT`
+
     const themeContext = useContext(ThemeContext);
 
     if (!themeContext) {

@@ -9,7 +9,6 @@ interface MainDetailsProps {
 const menuItems = [
     { name: 'Gráfico', href: '#graph' },
     { name: 'Contratos', href: '#contracts' },
-    /*{ name: 'Noticias', href: '#news' },*/
     { name: 'Acerca', href: '#about' },
 ]
 
@@ -39,11 +38,6 @@ export default function MainDetails({ data } : MainDetailsProps) {
                     <TradingViewChart symbol={`${data.symbol}`} />
                 </div>
             </div>
-
-            {/*<div className="text-2xl font-bold space-y-2" id="technicalAnalysis">
-                <h1>Análisis técnico</h1>
-                <TechnicalAnalysisGraph symbol={`${data.symbol}`} />
-            </div>*/}
 
             <div className="text-2xl font-bold space-y-2" id="contracts">
                 <h1>{data.name} Contratos</h1>
