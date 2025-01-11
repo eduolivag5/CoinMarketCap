@@ -47,20 +47,21 @@ export default function Header({ portfolio }: HeaderProps) {
                         {totalValue - totalInvested > 0 && '+'}
                         {`${(totalValue - totalInvested).toFixed(2)}$`}
                     </p>
+                    <span className={`font-medium text-sm ${profit > 0 ? 'text-positive' : 'text-negative'}`}>
+                        {profit > 0 && '+'}{(profit / totalInvested * 100).toFixed(2)}%
+                    </span>
                 </div>
-                <div className="border border-secondary p-4 rounded-md flex-1 flex justify-between">
-                    <div className="space-y-1">
-                        <p className="text-sm">Coste base</p>
-                        <p className="font-bold text-lg">
-                            {totalInvested.toFixed(2)}$
-                        </p>
-                    </div>
-                    <div className="space-y-1">
-                        <p className="text-sm">Tenencia actual</p>
-                        <p className="font-bold text-lg">
-                            {totalValue.toFixed(2)}$
-                        </p>
-                    </div>
+                <div className="border border-secondary p-4 rounded-md space-y-1 flex-1">
+                    <p className="text-sm">Coste base</p>
+                    <p className="font-bold text-lg">
+                        {totalInvested.toFixed(2)}$
+                    </p>
+                </div>
+                <div className="border border-secondary p-4 rounded-md space-y-1 flex-1">
+                    <p className="text-sm">Tenencia actual</p>
+                    <p className="font-bold text-lg">
+                        {totalValue.toFixed(2)}$
+                    </p>
                 </div>
                 {bestPortfolioItem && (
                     <div className="border border-secondary p-4 rounded-md space-y-1 flex-1">

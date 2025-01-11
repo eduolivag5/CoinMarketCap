@@ -191,9 +191,9 @@ export default function AddTransaction({ isOpen, onClose, onConfirm, transaction
                     <div className="space-y-1">
                         <label htmlFor="invested" className="text-sm">Total gastado:</label>
                         <div id="invested" className="w-full rounded-md p-2 focus:outline-none text-lg font-bold border border-secondary flex items-center gap-2">
-                            {selectedCoin?.quotes?.USD.price ? (
+                            {price ? (
                                 <span>
-                                    {`$${cutFirst8Digits(selectedCoin?.quotes?.USD.price * Number(amount))}`}
+                                    {`$${Number(price) * Number(amount)}`}
                                 </span>
                             ) : (
                                 <span>0.00</span>

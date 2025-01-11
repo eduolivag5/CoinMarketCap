@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 import { PortfolioItem } from "../../types"
-import { cutFirst8Digits, formatNumber } from "../../utils";
+import { cutFirst8Digits, formatMarketCap, formatNumber } from "../../utils";
 import { IoIosAddCircle } from "react-icons/io";
 import { BiTransfer } from "react-icons/bi";
 import { FaTrash } from "react-icons/fa";
@@ -34,6 +34,7 @@ export default function PortfolioTable({ portfolio } : PortfolioTableProps) {
                         <tr className='text-xs border-b border-secondary'>
                             <th className="px-1 md:px-6 py-2 text-left font-light">Moneda</th>                            
                             <th className="px-1 md:px-6 py-2 text-left font-light">Precio</th>
+                            <th className="px-1 md:px-6 py-2 text-left font-light hidden md:table-cell">Capitalización de mercado</th>
                             <th className="px-1 md:px-6 py-2 text-left font-light hidden md:table-cell">1h %</th>
                             <th className="px-1 md:px-6 py-2 text-left font-light hidden md:table-cell">24h %</th>
                             <th className="px-1 md:px-6 py-2 text-left font-light hidden md:table-cell">7d %</th>
@@ -52,7 +53,7 @@ export default function PortfolioTable({ portfolio } : PortfolioTableProps) {
                                         <p>{portfolioItem.coin.name}</p>
                                         <p className='text-xs'>{portfolioItem.coin.symbol}</p>
                                     </div>
-                                </td>
+                                </td>                                
                                 <td className="px-1 md:px-6 py-2">
                                     <div>
                                         <p>
@@ -65,8 +66,12 @@ export default function PortfolioTable({ portfolio } : PortfolioTableProps) {
                                             ? `${formatNumber(portfolioItem.coin.quotes.USD.percent_change_24h.toFixed(2))}%`
                                             : ""}
                                         </p>
-                                    </div>
-                                    
+                                    </div>                                    
+                                </td>
+                                <td className="px-1 md:px-6 py-2 hidden md:table-cell">
+                                    {portfolioItem.coin.quotes?.USD.market_cap &&
+                                        formatMarketCap(portfolioItem.coin.quotes?.USD.market_cap)
+                                    }
                                 </td>
                                 <td className={`px-1 md:px-6 py-2 hidden md:table-cell ${
                                         portfolioItem.coin.quotes?.USD.percent_change_1h && portfolioItem.coin.quotes?.USD.percent_change_1h > 0 ? "text-positive" : "text-negative"
@@ -91,7 +96,7 @@ export default function PortfolioTable({ portfolio } : PortfolioTableProps) {
                                 </td>
                                 <td className="px-1 md:px-6 py-2 hidden md:table-cell">
                                     <p className='font-semibold'>${portfolioItem.totalInvested.toFixed(2)}</p>
-                                    <p>{portfolioItem.amount.toFixed(2)} {portfolioItem.coin.symbol}</p>
+                                    <p className="text-xs">{portfolioItem.amount.toFixed(2)} {portfolioItem.coin.symbol}</p>
                                 </td>
                                 <td className="px-1 md:px-6 py-2 hidden md:table-cell">{cutFirst8Digits(portfolioItem.averagePrice)}$</td>
                                 <td className="px-1 md:px-6 py-2 text-right md:text-left">

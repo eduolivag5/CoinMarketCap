@@ -7,22 +7,19 @@ import PortfolioTable from '../components/Portfolio/PortfolioTable';
 import { useMutation } from '@tanstack/react-query';
 import { getCriptoListInfo } from '../api/coins';
 import { PortfolioItem } from '../types';
-import Loading from '../components/Loading';
 import Header from '../components/Portfolio/Header';
 
 export default function Portfolio() {
     const { transactions } = useTransactionStore();
     const [portfolioList, setPortfolioList] = useState<PortfolioItem[]>([]);
-    const [isLoading, setIsLoading] = useState(false); // Estado para controlar la carga
-
-    // Memorizar items y coinIds
+    
     const portfolioItems = useMemo(() => convertTransactionsToPortfolio(transactions), [transactions]);
     const coinIds = useMemo(
         () => portfolioItems.map((item) => Number(item.coin.id)).filter((id) => !isNaN(id)),
         [portfolioItems]
     );
 
-    // Configurar useMutation con onSuccess y manejo manual del estado
+    
     const { mutate: fetchCriptoListInfo } = useMutation({
         mutationFn: getCriptoListInfo,
         onSuccess: (data) => {
@@ -41,20 +38,27 @@ export default function Portfolio() {
                 return item;
             });
             setPortfolioList(updatedItems);
-            console.log(portfolioList)
-            setIsLoading(false); // Finalizar carga cuando los datos se actualizan
-        },
-        onError: () => {
-            setIsLoading(false); // Finalizar carga incluso si hay error
-        },
+        }
     });
 
-    // Llamar a la API cuando cambien los coinIds
+    
     useEffect(() => {
-        if (coinIds.length > 0) {
-            setIsLoading(true); // Activar estado de carga
-            fetchCriptoListInfo(coinIds);
-        }
+        const fetchData = () => {
+            if (coinIds.length > 0) {
+                fetchCriptoListInfo(coinIds);
+            }
+        };
+    
+        // Ejecutar inmediatamente cuando `coinIds` cambie
+        fetchData();
+    
+        // Crear un intervalo que ejecute la función cada 20 segundos
+        const intervalId = setInterval(fetchData, 20000);
+    
+        // Limpiar el intervalo cuando se desmonta o cambia `coinIds`
+        return () => {
+            clearInterval(intervalId);
+        };
     }, [coinIds, fetchCriptoListInfo]);
 
     return (
@@ -68,14 +72,10 @@ export default function Portfolio() {
             </header>
 
             {/* Mostrar un spinner o indicador de carga */}
-            {isLoading ? (
-                <Loading />
-            ) : (
-                <div className='space-y-4'>
-                    <Header portfolio={portfolioList} />
-                    <PortfolioTable portfolio={portfolioList} />
-                </div>
-            )}
+            <div className='space-y-4'>
+                <Header portfolio={portfolioList} />
+                <PortfolioTable portfolio={portfolioList} />
+            </div>
         </div>
     );
 }
