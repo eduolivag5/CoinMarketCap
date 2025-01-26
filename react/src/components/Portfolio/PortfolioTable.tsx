@@ -51,7 +51,7 @@ export default function PortfolioTable({ portfolio } : PortfolioTableProps) {
                                     <img src={portfolioItem.coin.logo} alt={portfolioItem.coin.name} className="w-6 h-6 rounded-full" />
                                     <div>
                                         <p>{portfolioItem.coin.name}</p>
-                                        <p className='text-xs'>{portfolioItem.coin.symbol}</p>
+                                        <p className='text-xs font-light'>{portfolioItem.coin.symbol}</p>
                                     </div>
                                 </td>                                
                                 <td className="px-1 md:px-6 py-2">

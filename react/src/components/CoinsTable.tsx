@@ -147,7 +147,7 @@ export default function CoinsTable({ data }: CoinsTableProps) {
                             <img src={coin.logo} alt={coin.name} className="w-8 h-8 rounded-full" />
                             <div>
                                 <p className="line-clamp-1">{coin.name}</p>
-                                <p>{coin.symbol}</p>
+                                <p className="font-light text-xs">{coin.symbol}</p>
                             </div>
                         </td>
                         <td className="px-1 md:px-6 py-3 md:py-4 font-semibold">
