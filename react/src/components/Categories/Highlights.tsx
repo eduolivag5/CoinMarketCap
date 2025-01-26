@@ -15,8 +15,6 @@ export default function Highlights({ data } : HighlightsProps) {
                                     .sort((a, b) => a.quote.USD.percent_change_24h - b.quote.USD.percent_change_24h)
                                     .slice(0, 3)
 
-    console.log(sorteredNegativeCoins)
-
     return (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="rounded-lg text-sm border border-secondary p-4 space-y-3">
@@ -53,7 +51,9 @@ export default function Highlights({ data } : HighlightsProps) {
                                         <img src={coin.logo} className="w-6 h-6 rounded-full" alt={coin.name} />
                                         {coin.symbol}
                                     </td>
-                                    <td className="p-1">${cutFirst8Digits(coin.quote.USD.price!)}</td>
+                                    <td className="p-1">
+                                        {coin.quote.USD.price ? `$${cutFirst8Digits(coin.quote.USD.price)}` : ""}
+                                    </td>
                                     <td className={`p-1 text-right ${coin.quote.USD.percent_change_24h > 0 ? 'text-positive' : 'text-negative'}`}>
                                         {coin.quote.USD.percent_change_24h.toFixed(2)}%
                                     </td>

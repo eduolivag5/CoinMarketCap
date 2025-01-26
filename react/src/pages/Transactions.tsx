@@ -23,7 +23,6 @@ export default function Transactions() {
     }, [id, transactions]);
 
     const handleOpen = () => {
-        console.log('IsOpen: ', isOpen);
         setIsOpen(!isOpen);
     };
 
