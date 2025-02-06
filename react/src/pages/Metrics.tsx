@@ -8,6 +8,7 @@ export default function Metrics() {
     const { data, isError, isLoading } = useQuery({
         queryKey: ['global-metrics'],
         queryFn: () => getGlobalMetrics(),
+        staleTime: 1000 * 60 * 60 * 24
     });
 
     return (

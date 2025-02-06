@@ -8,6 +8,7 @@ export default function Categories() {
     const { data, isError, isLoading } = useQuery({
         queryKey: ['categories'],
         queryFn: () => getCategories(),
+        staleTime: 1000 * 60 * 60
     });
 
     return (

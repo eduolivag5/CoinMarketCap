@@ -11,12 +11,14 @@ export default function Highlights() {
 
     const { data: dataFearAndGreed, isError: isErrorFearAndGreed } = useQuery({
         queryKey: ['fear-and-greed'],
-        queryFn: () => getFearAndGreedIndex()
+        queryFn: () => getFearAndGreedIndex(),
+        staleTime: 1000 * 60 * 60 * 24
     })
 
     const { data: dataGlobalMetrics, isError: isErrorGlobalMetrics } = useQuery({
         queryKey: ['global-metrics'],
-        queryFn: () => getGlobalMetrics()
+        queryFn: () => getGlobalMetrics(),
+        staleTime: 1000 * 60 * 60 * 24
     })
 
     // Estado para controlar la visibilidad de Highlights

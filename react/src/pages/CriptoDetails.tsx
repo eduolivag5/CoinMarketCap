@@ -12,6 +12,7 @@ export default function CriptoDetails() {
     const { data, isError, isLoading } = useQuery({
         queryKey: [`details-${id}`],
         queryFn: () => getCryptoDetails(id!),
+        staleTime: 1000 * 60 * 60
     });    
 
     return (

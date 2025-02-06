@@ -7,7 +7,8 @@ export default function Top100ByMCAP() {
 
     const { data, isError, isLoading } = useQuery({
         queryKey: ['top100coins'],
-        queryFn: getTop100
+        queryFn: getTop100,
+        staleTime: 1000 * 60 * 5
     })
 
     return (

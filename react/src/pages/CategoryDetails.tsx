@@ -12,6 +12,7 @@ export default function CategoryDetails() {
     const { data, isError, isLoading } = useQuery({
         queryKey: [`details-${id}`],
         queryFn: () => getCategoryDetails(id!),
+        staleTime: 1000 * 60 * 60
     });
 
     const navigate = useNavigate();

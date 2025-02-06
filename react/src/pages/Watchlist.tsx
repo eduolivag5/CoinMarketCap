@@ -10,7 +10,8 @@ export default function Watchlist() {
 
     const { data, isError, isLoading } = useQuery({
         queryKey: ['watchlist'],
-        queryFn: () => getCriptoListInfo(watchlist)
+        queryFn: () => getCriptoListInfo(watchlist),
+        staleTime: 1000 * 60 * 60
     })
 
     return (
