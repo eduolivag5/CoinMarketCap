@@ -6,14 +6,26 @@ import NavMobile from './components/Navbar/NavMobile';
 export default function App() {
     return (
         <BrowserRouter>
-            <div className="flex flex-col h-[100dvh]">
+            {/* Contenedor principal sin flex-col para evitar conflictos con fixed */}
+            <div className="min-h-[100dvh] bg-background text-text">
+                
                 <Navbar />
 
-                <div className="flex-1 overflow-y-auto bg-background text-text p-4 pt-16 pb-20 md:p-8 md:pt-20 drop-shadow-lg">
+                <main className="
+                    /* Espaciado para Desktop: Navbar (80px aprox) */
+                    pt-24 md:pt-28 
+                    /* Espaciado para Móvil: NavMobile flotante (90px aprox) */
+                    pb-28 md:pb-8 
+                    /* Padding lateral */
+                    px-4 md:px-12 
+                    /* Centrado del contenido máximo */
+                    max-w-[1600px] mx-auto
+                ">
                     <AppRoutes />
-                </div>
+                </main>
 
                 <NavMobile />
+                
             </div>
         </BrowserRouter>
     );

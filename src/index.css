@@ -2,17 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
+/* --- Configuración Base --- */
 :root {
-  font-family: Inter;
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
+
+  /* Variables Light Theme */
+  --color-primary: #3861fb;
+  --color-secondary: #e2e8f0;
+  --color-background: #f7f9fc;
+  --color-text: #1b1d1f;
+  
+  /* Scrollbar Light */
+  --scrollbar-thumb: rgba(0, 0, 0, 0.2);
+  --scrollbar-thumb-hover: rgba(0, 0, 0, 0.4);
 }
 
-/* Define variables globales */
+.dark {
+  /* Variables Dark Theme */
+  --color-primary: #3861fb;
+  --color-secondary: #1b1d1f;
+  --color-background: #111212;
+  --color-text: #f8fafc;
+
+  /* Scrollbar Dark (Spotify Style) */
+  --scrollbar-thumb: rgba(255, 255, 255, 0.3);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.5);
+}
+
 html, body {
   width: 100%;
   height: 100%;
   scroll-behavior: smooth;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  transition: background-color 0.3s ease;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -21,8 +46,10 @@ html, body {
   }
 }
 
+/* --- Scrollbar Exacto Spotify --- */
 ::-webkit-scrollbar {
-  width: 9px;
+  /* Ancho total del área de scroll */
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
@@ -30,51 +57,51 @@ html, body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #3b82df;
-  border-radius: 4px;
-  border: 2px solid transparent;
+  background-color: var(--scrollbar-thumb);
+  border-radius: 10px;
+  /* El truco: un borde transparente que reduce el tamaño visual del thumb */
+  border: 3px solid transparent;
   background-clip: padding-box;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
 }
 
 ::-webkit-scrollbar-button {
-  display: none; /* Ocultar flechas */
+  display: none;
 }
 
-:root {
-  --color-primary: #3861fb; /* Azul suave pero destacado */
-  --color-secondary: #e2e8f0; /* Un gris claro para elementos secundarios */
-  --color-background: #f7f9fc; /* Blanco roto o gris muy claro para evitar el blanco puro */
-  --color-text: #1b1d1f; /* Texto oscuro para un buen contraste */
+/* Soporte para Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
 }
 
-.dark {
-  --color-primary: #3861fb;
-  --color-secondary: #1b1d1f;
-  --color-background: #111212;
-  --color-text: #f8fafc;
-}
+/* --- Utilidades de Tailwind Adaptadas --- */
+@layer utilities {
+  .bg-primary {
+    background-color: var(--color-primary);
+  }
 
-/* Asocia las variables a utilidades de Tailwind */
-.bg-primary {
-  background-color: var(--color-primary);
-}
+  .bg-secondary {
+    background-color: var(--color-secondary);
+  }
 
-.bg-secondary {
-  background-color: var(--color-secondary);
-}
+  .text-primary {
+    color: var(--color-primary);
+  }
 
-.text-primary {
-  color: var(--color-primary);
-}
+  .text-secondary {
+    color: var(--color-secondary);
+  }
 
-.text-secondary {
-  color: var(--color-secondary);
-}
+  .bg-background {
+    background-color: var(--color-background);
+  }
 
-.bg-background {
-  background-color: var(--color-background);
-}
-
-.text-text {
-  color: var(--color-text);
+  .text-text {
+    color: var(--color-text);
+  }
 }

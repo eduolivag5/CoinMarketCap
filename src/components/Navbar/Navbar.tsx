@@ -1,88 +1,85 @@
+import { useContext } from 'react';
+import { Link } from "react-router-dom";
 import { FaHome, FaRegStar, FaSearch, FaWallet } from "react-icons/fa";
 import { AiOutlineLineChart } from "react-icons/ai";
 import { BiSolidCategory } from "react-icons/bi";
-import RouteLink from "./RouteLink";
-import { useContext } from 'react';
-import { ThemeContext } from "../../ThemeContext";
-import { Link } from "react-router-dom";
 import { FiMoon, FiSun } from "react-icons/fi";
+import { ThemeContext } from "../../ThemeContext";
+import RouteLink from "./RouteLink";
 
-const routes = [
-    { href: '/', icon: <FaHome />, text: 'Home' },
-    { href: '/global-metrics', icon: <AiOutlineLineChart />, text: 'Métricas globales' },
-    { href: '/portfolio', icon: <FaWallet />, text: 'Cartera' },
-    { href: '/categories', icon: <BiSolidCategory />, text: 'Categorias' },
-    { href: '/watchlist', icon: <FaRegStar />, text: 'Lista de seguimiento' },
-    { href: '/search', icon: <FaSearch />, text: 'Buscar' },
-]
+// Definición de tipos para las rutas
+interface RouteItem {
+  href: string;
+  icon: JSX.Element;
+  text: string;
+}
+
+const routes: RouteItem[] = [
+  { href: '/', icon: <FaHome />, text: 'Home' },
+  { href: '/global-metrics', icon: <AiOutlineLineChart />, text: 'Métricas' },
+  { href: '/portfolio', icon: <FaWallet />, text: 'Cartera' },
+  { href: '/categories', icon: <BiSolidCategory />, text: 'Categorías' },
+  { href: '/watchlist', icon: <FaRegStar />, text: 'Watchlist' },
+  { href: '/search', icon: <FaSearch />, text: 'Buscar' },
+];
 
 export default function Navbar() {
+  const themeContext = useContext(ThemeContext);
 
-    const themeContext = useContext(ThemeContext);
+  if (!themeContext) {
+    throw new Error('ThemeContext debe ser usado dentro de un ThemeProvider');
+  }
 
-    if (!themeContext) {
-        throw new Error('ThemeContext debe ser usado dentro de un ThemeProvider');
-    }
+  const { theme, toggleTheme } = themeContext;
 
-    const { theme, toggleTheme } = themeContext;
+  return (
+    <header 
+      className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl 
+      rounded-2xl border transition-all duration-300
+      ${theme === "dark" 
+        ? "bg-[#111212]/80 border-white/10" 
+        : "bg-white/70 border-black/5"} 
+      backdrop-blur-md shadow-lg px-6 py-3`}
+    >
+      <div className="flex items-center justify-between">
+        
+        {/* Logo Section */}
+        <div className="flex items-center gap-8">
+          <Link to='/' className="transition-transform hover:scale-105 active:scale-95">
+            <img
+              src={theme === 'dark' ? "/coinmarketcap_2.svg" : "/coinmarketcap_1.svg"}
+              alt="Logo"
+              className="h-7 w-auto"
+            />
+          </Link>
 
-    return (
-        <header className={`fixed top-0 z-50 w-full text-text px-4 md:px-8 py-3 md:py-2 text-sm backdrop-blur-[3px] backdrop-saturate-[100%] ${theme === "dark" ? "bg-[#111212]" : "bg-[#e2e8f0]"} bg-opacity-90`}>
-            <div className="flex items-center gap-6 justify-between">
-                
-                <div className="flex items-center gap-10">
-                    <div className="flex items-center gap-2">
-                        <Link to='/' className="text-text">
-                            {theme === 'dark' ? 
-                                <img
-                                    src="/coinmarketcap_2.svg"
-                                    alt="CoinMarketCap Logo"
-                                    className="h-8"
-                                />
-                            :
-                                <img
-                                    src="/coinmarketcap_1.svg"
-                                    alt="CoinMarketCap Logo"
-                                    className="h-8"
-                                />
-                            }
-                            
-                        </Link>              
-                    </div>
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center gap-2">
+            {routes.map((route) => (
+              <RouteLink 
+                key={route.href} 
+                href={route.href} 
+                icon={route.icon} 
+                text={route.text} 
+              />
+            ))}
+          </nav>
+        </div>
 
-                    
-                    <nav className="hidden md:flex items-center gap-1">
-                        {routes.map((route) => (
-                            <RouteLink key={route.href} href={route.href} icon={route.icon} text={route.text} />
-                        ))}
-                    </nav>
-                </div>
-
-
-                <div className="flex items-center gap-2">                    
-                    <label htmlFor="theme-toggle" className="relative inline-flex items-center cursor-pointer">
-                        <input
-                            type="checkbox"
-                            id="theme-toggle"
-                            className="sr-only"
-                            checked={theme === 'dark'}
-                            onChange={toggleTheme}
-                        />
-                        <div className="w-11 h-6 bg-secondary rounded-full dark:bg-primary"></div>
-                        <span
-                        className={`absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition transform duration-200 ease-in-out ${
-                            theme === 'dark' ? 'translate-x-5' : ''
-                        }`}></span>
-                    </label>
-
-                    {theme === 'dark' ? 
-                        <FiMoon className="w-4 h-4" />
-                        :
-                        <FiSun className="w-4 h-4" />
-                    }
-                </div>
-                
-            </div>
-        </header>
-    );
-};
+        {/* Actions Section */}
+        <div className="flex items-center gap-4">
+          <button
+            onClick={toggleTheme}
+            className={`p-2.5 rounded-xl transition-all duration-300 
+            ${theme === 'dark' 
+              ? 'bg-white/5 hover:bg-white/10 text-yellow-400' 
+              : 'bg-black/5 hover:bg-black/10 text-indigo-600'}`}
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? <FiSun size={18} /> : <FiMoon size={18} />}
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}
