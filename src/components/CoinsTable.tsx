@@ -14,7 +14,7 @@ export default function CoinsTable({ data }: CoinsTableProps) {
     const { watchlist, addCoin, removeCoin } = useWatchlistStore();
 
     const [sortColumn, setSortColumn] = useState<string>("marketcap");
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");     
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");    
 
     const columnKeyMap: Record<string, keyof CryptoPrincipalDataType | string> = {
         cmc_rank: "cmc_rank",
@@ -27,7 +27,6 @@ export default function CoinsTable({ data }: CoinsTableProps) {
         volume: "quote.USD.volume_24h",
     };
 
-    // Función para acceder a propiedades anidadas
     const getNestedValue = (obj: any, path: string) => {
         return path.split('.').reduce((acc, part) => acc && acc[part], obj);
     };
@@ -61,6 +60,15 @@ export default function CoinsTable({ data }: CoinsTableProps) {
         } else {
             removeCoin(coinId);
         }
+    };
+
+    // Formateador específico para porcentajes que fuerza siempre 2 decimales
+    const formatPercent = (value: number | undefined) => {
+        const num = value ?? 0;
+        return new Intl.NumberFormat('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        }).format(num);
     };
 
     return (
@@ -119,81 +127,81 @@ export default function CoinsTable({ data }: CoinsTableProps) {
                 </tr>
             </thead>
             <tbody>
-                {sortedCoins.map((coin) => (
-                    <tr
-                        onClick={() => navigate(`/details/${coin.id}`)}
-                        key={coin.id}
-                        className="font-medium text-xs md:text-sm hover:bg-secondary transition-colors duration-200 cursor-pointer"
-                    >
-                        <td className="px-2 py-3 md:py-4">
-                            <button
-                                className={`flex items-center gap-2 hover:text-primary focus:text-primary transition-colors duration-200 ${
-                                    watchlist.includes(coin.id) && "text-primary"
+                {sortedCoins.map((coin) => {
+                    const change1h = coin.quote.USD.percent_change_1h ?? 0;
+                    const change24h = coin.quote.USD.percent_change_24h ?? 0;
+                    const change7d = coin.quote.USD.percent_change_7d ?? 0;
+
+                    return (
+                        <tr
+                            onClick={() => navigate(`/details/${coin.id}`)}
+                            key={coin.id}
+                            className="font-medium text-xs md:text-sm hover:bg-secondary transition-colors duration-200 cursor-pointer"
+                        >
+                            <td className="px-2 py-3 md:py-4">
+                                <button
+                                    className={`flex items-center gap-2 hover:text-primary focus:text-primary transition-colors duration-200 ${
+                                        watchlist.includes(coin.id) && "text-primary"
+                                    }`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleAddToWatchlist(coin.id);
+                                    }}
+                                >
+                                    {watchlist.includes(coin.id) ? (
+                                        <FaStar className="w-3 h-3 hover:text-primary transition-colors duration-200 cursor-pointer" />
+                                    ) : (
+                                        <FaRegStar className="w-3 h-3 hover:text-primary transition-colors duration-200 cursor-pointer" />
+                                    )}
+                                </button>
+                            </td>
+                            <td className="px-1 md:px-6 py-3 md:py-4 font-bold">{coin.cmc_rank}</td>
+                            <td className="px-1 md:px-6 py-3 md:py-4 font-semibold flex items-center gap-4">
+                                <img src={coin.logo} alt={coin.name} className="w-8 h-8 rounded-full" />
+                                <div>
+                                    <p className="line-clamp-1">{coin.name}</p>
+                                    <p className="font-light text-xs">{coin.symbol}</p>
+                                </div>
+                            </td>
+                            <td className="px-1 md:px-6 py-3 md:py-4 font-semibold">
+                                {coin.quote.USD.price 
+                                    ? `$${formatNumber(coin.quote.USD.price.toString().slice(0, 8))}`
+                                    : ""}
+                            </td>
+                            <td
+                                className={`px-1 md:px-6 py-3 md:py-4 hidden md:table-cell ${
+                                    change1h >= 0 ? "text-positive" : "text-negative"
                                 }`}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleAddToWatchlist(coin.id);
-                                }}
                             >
-                                {watchlist.includes(coin.id) ? (
-                                    <FaStar className="w-3 h-3 hover:text-primary transition-colors duration-200 cursor-pointer" />
-                                ) : (
-                                    <FaRegStar className="w-3 h-3 hover:text-primary transition-colors duration-200 cursor-pointer" />
-                                )}
-                            </button>
-                        </td>
-                        <td className="px-1 md:px-6 py-3 md:py-4 font-bold">{coin.cmc_rank}</td>
-                        <td className="px-1 md:px-6 py-3 md:py-4 font-semibold flex items-center gap-4">
-                            <img src={coin.logo} alt={coin.name} className="w-8 h-8 rounded-full" />
-                            <div>
-                                <p className="line-clamp-1">{coin.name}</p>
-                                <p className="font-light text-xs">{coin.symbol}</p>
-                            </div>
-                        </td>
-                        <td className="px-1 md:px-6 py-3 md:py-4 font-semibold">
-                            {coin.quote.USD.price 
-                                ? `$${formatNumber(coin.quote.USD.price.toString().slice(0, 8))}`
-                                : ""}
-                        </td>
-                        <td
-                            className={`px-1 md:px-6 py-3 md:py-4 hidden md:table-cell ${
-                                coin.quote.USD.percent_change_1h > 0 ? "text-positive" : "text-negative"
-                            }`}
-                        >
-                            {coin.quote.USD.percent_change_1h 
-                                ? `${formatNumber(coin.quote.USD.percent_change_1h.toFixed(2))}%`
-                                : ""}
-                        </td>
-                        <td
-                            className={`px-1 md:px-6 py-3 md:py-4 text-right md:text-left ${
-                                coin.quote.USD.percent_change_24h > 0 ? "text-positive" : "text-negative"
-                            }`}
-                        >
-                            {coin.quote.USD.percent_change_24h 
-                                ? `${formatNumber(coin.quote.USD.percent_change_24h.toFixed(2))}%`
-                                : ""}
-                        </td>
-                        <td
-                            className={`px-1 md:px-6 py-3 md:py-4 hidden md:table-cell ${
-                                coin.quote.USD.percent_change_7d > 0 ? "text-positive" : "text-negative"
-                            }`}
-                        >
-                            {coin.quote.USD.percent_change_7d
-                                ? `${formatNumber(coin.quote.USD.percent_change_7d.toFixed(2))}%`
-                                : ""}
-                        </td>
-                        <td className="px-1 md:px-6 py-3 md:py-4 hidden md:table-cell">
-                            {coin.quote.USD.market_cap 
-                                ? `${formatNumber(coin.quote.USD.market_cap.toFixed(0))}`
-                                : ""}
-                        </td>
-                        <td className="px-1 md:px-6 py-3 md:py-4 hidden md:table-cell">
-                            {coin.quote.USD.volume_24h 
-                                ? `${formatNumber(coin.quote.USD.volume_24h.toFixed(0))}`
-                                : ""}
-                        </td>
-                    </tr>
-                ))}
+                                {`${formatPercent(change1h)}%`}
+                            </td>
+                            <td
+                                className={`px-1 md:px-6 py-3 md:py-4 text-right md:text-left ${
+                                    change24h >= 0 ? "text-positive" : "text-negative"
+                                }`}
+                            >
+                                {`${formatPercent(change24h)}%`}
+                            </td>
+                            <td
+                                className={`px-1 md:px-6 py-3 md:py-4 hidden md:table-cell ${
+                                    change7d >= 0 ? "text-positive" : "text-negative"
+                                }`}
+                            >
+                                {`${formatPercent(change7d)}%`}
+                            </td>
+                            <td className="px-1 md:px-6 py-3 md:py-4 hidden md:table-cell">
+                                {coin.quote.USD.market_cap 
+                                    ? `${formatNumber(coin.quote.USD.market_cap.toFixed(0))}`
+                                    : ""}
+                            </td>
+                            <td className="px-1 md:px-6 py-3 md:py-4 hidden md:table-cell">
+                                {coin.quote.USD.volume_24h 
+                                    ? `${formatNumber(coin.quote.USD.volume_24h.toFixed(0))}`
+                                    : ""}
+                            </td>
+                        </tr>
+                    );
+                })}
             </tbody>
         </table>
     );

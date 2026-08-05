@@ -5,7 +5,8 @@ import { searchCoins } from '../api/coins';
 import Loading from '../components/Loading';
 import { SearchItemsType } from '../types';
 import { useNavigate } from 'react-router-dom';
-import { cutFirst8Digits } from '../utils';
+import { cutFirst8Digits, formatNumber } from '../utils';
+import { HiOutlineSearch } from 'react-icons/hi';
 
 export default function Search() {
     const [searchText, setSearchText] = React.useState('');
@@ -24,7 +25,6 @@ export default function Search() {
         },
     });
 
-    
     const [debounceTimeout, setDebounceTimeout] = useState<ReturnType<typeof setTimeout> | null>(null);    
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const query = e.target.value;
@@ -46,63 +46,111 @@ export default function Search() {
     };
 
     return (
-        <div className='flex flex-col md:flex-row gap-2'>        
-            <div className='space-y-2 md:px-4 md:border-r md:border-secondary md:w-96 md:min-w-96'>
-                <p className='font-bold text-2xl'>Buscar</p>
-                <div className='inline-flex w-full items-center gap-4 p-3 bg-secondary rounded-lg'>
+        <div className='flex flex-col md:flex-row gap-6'>        
+            {/* Panel Izquierdo / Barra de Búsqueda */}
+            <div className='space-y-4 md:px-2 md:w-80 md:min-w-80'>
+                <div>
+                    <p className='font-bold text-2xl tracking-tight'>Buscar</p>
+                    <p className='text-xs opacity-60 font-medium mt-0.5'>Encuentra criptomonedas y tokens.</p>
+                </div>
+                
+                <div className='relative flex items-center bg-secondary/20 rounded-2xl px-4 py-3 border-none outline-none ring-0 focus-within:ring-1 focus-within:ring-primary/50 transition-colors'>
+                    <FaSearch className="w-4 h-4 opacity-40 mr-3" />
                     <input
                         type="text"
                         value={searchText}
                         onChange={handleSearchChange} 
                         placeholder="Escribe para buscar..."
-                        className="w-full text-sm rounded-lg focus:outline-none bg-transparent"
+                        className="w-full text-sm focus:outline-none bg-transparent font-medium border-none ring-0 outline-none placeholder:text-secondary-foreground/40"
                     />
-                    <FaSearch className="w-4 h-4" />
                 </div>
             </div>
-            
 
-            <div className='md:p-4 w-full'>
-                {mutation.isPending && <Loading />}
+            {/* Panel Derecho / Resultados */}
+            <div className='w-full'>
+                {mutation.isPending && (
+                    <div className='py-12 flex justify-center'>
+                        <Loading />
+                    </div>
+                )}
 
-                {/* Mostrar los resultados de la búsqueda */}
-                {results && results.length > 0 && (
-                    <div className='w-full'>
-                        <table className='w-full'>
+                {!mutation.isPending && results && results.length > 0 && (
+                    <div className='overflow-x-auto'>
+                        <table className='w-full border-collapse border-none'>
                             <thead>
-                                <tr className='text-xs font-light border-b border-secondary'>
-                                    <td className='py-2 px-4'>Moneda</td>
-                                    <td className='py-2 px-4 hidden md:table-cell'>Símbolo</td>
-                                    <td className='py-2 px-4 text-right md:text-left'>Precio</td>
-                                    <td className='py-2 px-4 text-right md:text-left'>24h %</td>
-                                    <td className='py-2 px-4 hidden md:table-cell'>Plataforma</td>
+                                <tr className='text-xs uppercase tracking-wider opacity-50 border-none'>
+                                    <th className='py-3 px-4 md:px-5 text-left font-bold border-none'>Moneda</th>
+                                    <th className='py-3 px-4 md:px-5 text-left font-bold hidden md:table-cell border-none'>Símbolo</th>
+                                    <th className='py-3 px-4 md:px-5 text-right md:text-left font-bold border-none'>Precio</th>
+                                    <th className='py-3 px-4 md:px-5 text-right md:text-left font-bold border-none'>24h %</th>
+                                    <th className='py-3 px-4 md:px-5 text-left font-bold hidden md:table-cell border-none'>Plataforma</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                            {results.map((result) => (
-                                <tr key={result.id} onClick={() => navigate(`/details/${result.id}`)} className='text-sm transition-colors duration-200 cursor-pointer hover:bg-secondary'>
-                                    <td className='py-2 px-4'>
-                                        <div className='flex items-center gap-2 font-bold'>
-                                            <img src={result.logo} alt={result.name} className='rounded-lg w-8 h-8' />
-                                            <div className='flex flex-col'>
-                                                <p className='text-sm'>{result.name}</p>
-                                                <p className='text-xs font-semibold text-gray-400 md:hidden'>{result.symbol}</p>
-                                            </div>
-                                        </div>                                        
-                                    </td>
-                                    <td className='py-2 px-4 hidden md:table-cell font-semibold'>{result.symbol}</td>
-                                    <td className='py-2 px-4 text-right md:text-left'>
-                                        {result.quotes?.USD?.price ? cutFirst8Digits(result.quotes?.USD?.price) : 'N/A'}
-                                    </td>
-                                    <td className={`py-2 px-4 text-right md:text-left ${result.quotes?.USD?.percent_change_24h! > 0 ? 'text-positive' : 'text-negative'}`}>
-                                        {result.quotes?.USD?.percent_change_24h && cutFirst8Digits(result.quotes?.USD?.percent_change_24h.toFixed(2))}%
-                                    </td>
-                                    <td className='py-2 px-4 hidden md:table-cell'>{result.platform?.name}</td>
-                                </tr>
-                            ))}
+                            <tbody className='border-none'>
+                                {results.map((result) => {
+                                    const percent24h = result.quotes?.USD?.percent_change_24h;
+                                    const isPositive = percent24h !== undefined && percent24h > 0;
+
+                                    return (
+                                        <tr 
+                                            key={result.id} 
+                                            onClick={() => navigate(`/details/${result.id}`)} 
+                                            className='text-sm group hover:bg-secondary/15 transition-colors duration-200 cursor-pointer border-none'
+                                        >
+                                            <td className='py-4 px-4 md:px-5 border-none'>
+                                                <div className='flex items-center gap-3'>
+                                                    <img src={result.logo} alt={result.name} className='rounded-full w-8 h-8 bg-secondary/20 p-0.5 shadow-sm' />
+                                                    <div className='flex flex-col'>
+                                                        <p className='font-bold tracking-tight'>{result.name}</p>
+                                                        <p className='text-[10px] uppercase opacity-55 font-semibold md:hidden'>{result.symbol}</p>
+                                                    </div>
+                                                </div>         
+                                            </td>
+                                            
+                                            <td className='py-4 px-4 md:px-5 hidden md:table-cell font-semibold uppercase text-xs opacity-70 border-none'>
+                                                {result.symbol}
+                                            </td>
+                                            
+                                            <td className='py-4 px-4 md:px-5 text-right md:text-left font-bold border-none'>
+                                                {result.quotes?.USD?.price ? `$${cutFirst8Digits(result.quotes?.USD?.price)}` : 'N/A'}
+                                            </td>
+                                            
+                                            <td className={`py-4 px-4 md:px-5 text-right md:text-left font-bold text-xs border-none ${isPositive ? 'text-positive' : 'text-negative'}`}>
+                                                {percent24h !== undefined ? `${formatNumber(percent24h.toFixed(2))}%` : '0.00%'}
+                                            </td>
+                                            
+                                            <td className='py-4 px-4 md:px-5 hidden md:table-cell text-xs opacity-70 font-medium border-none'>
+                                                {result.platform?.name || 'N/A'}
+                                            </td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
                         </table>
-                        
+                    </div>
+                )}
+
+                {results && results.length === 0 && !mutation.isPending && searchText.length >= 2 && (
+                    <div className="flex flex-col items-center justify-center p-12 text-center rounded-3xl bg-secondary/10 space-y-3 my-6 border-none">
+                        <div className="w-14 h-14 rounded-2xl bg-secondary/30 flex items-center justify-center text-primary shadow-sm">
+                            <HiOutlineSearch className="w-7 h-7 opacity-70" />
+                        </div>
+                        <div className="space-y-1">
+                            <p className="font-bold text-base">No se encontraron resultados</p>
+                            <p className="text-xs opacity-60 font-medium">Prueba a buscar con otro término o símbolo.</p>
+                        </div>
+                    </div>
+                )}
+
+                {searchText.length < 2 && !mutation.isPending && (
+                    <div className="flex flex-col items-center justify-center p-16 text-center rounded-3xl bg-secondary/10 space-y-3 my-6 border-none">
+                        <div className="w-14 h-14 rounded-2xl bg-secondary/30 flex items-center justify-center text-primary shadow-sm">
+                            <HiOutlineSearch className="w-7 h-7 opacity-70" />
+                        </div>
+                        <div className="space-y-1">
+                            <p className="font-bold text-base">Empieza a escribir</p>
+                            <p className="text-xs opacity-60 font-medium">Introduce al menos 2 caracteres para buscar activos.</p>
+                        </div>
                     </div>
                 )}
             </div>

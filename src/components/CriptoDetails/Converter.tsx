@@ -8,7 +8,7 @@ interface ConverterProps {
 
 export default function Converter({ symbol, price, logo }: ConverterProps) {
     const [usdValue, setUsdValue] = useState<string>('100');
-    const [tokenValue, setTokenValue] = useState<string>('');
+    const [tokenValue, setTokenValue] = useState<string>((100 / price).toFixed(6));
 
     const handleUsdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const usd = parseFloat(e.target.value);
@@ -31,12 +31,10 @@ export default function Converter({ symbol, price, logo }: ConverterProps) {
     };
 
     return (
-        <div className="flex flex-wrap items-center gap-4">
-
-            {/* Token Input */}
-            <div className="flex-1 flex flex-col gap-2">
-                <label htmlFor="tokens" className="text-sm font-medium flex items-center gap-2">
-                    <img src={logo} alt={symbol} className="h-6 w-6" />
+        <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+                <label htmlFor="tokens" className="text-xs font-semibold opacity-70 flex items-center gap-2">
+                    <img src={logo} alt={symbol} className="h-5 w-5 rounded-full" />
                     {symbol}
                 </label>
                 <input
@@ -45,14 +43,14 @@ export default function Converter({ symbol, price, logo }: ConverterProps) {
                     value={tokenValue}
                     onChange={handleTokenChange}
                     placeholder={`Enter ${symbol}`}
-                    className="border border-secondary p-2 rounded focus:outline-none bg-transparent w-full"
+                    style={{ backgroundColor: 'var(--color-secondary)', opacity: 0.9, color: 'inherit' }}
+                    className="p-3.5 rounded-2xl w-full text-sm font-bold border-none outline-none ring-0 focus:ring-1 focus:ring-primary/50 placeholder:opacity-40"
                 />
             </div>
 
-            {/* USD Input */}
-            <div className="flex-1 flex flex-col gap-2">
-                <label htmlFor="usd" className="text-sm font-medium flex items-center gap-2">
-                    <img src='/tether.svg' alt='Tether' className='h-6 w-6' />
+            <div className="flex flex-col gap-2">
+                <label htmlFor="usd" className="text-xs font-semibold opacity-70 flex items-center gap-2">
+                    <img src='/tether.svg' alt='Tether' className='h-5 w-5 rounded-full' />
                     USDT
                 </label>
                 <input
@@ -61,11 +59,10 @@ export default function Converter({ symbol, price, logo }: ConverterProps) {
                     value={usdValue}
                     onChange={handleUsdChange}
                     placeholder="Enter USD"
-                    className="border border-secondary p-2 rounded focus:outline-none bg-transparent w-full"
+                    style={{ backgroundColor: 'var(--color-secondary)', opacity: 0.9, color: 'inherit' }}
+                    className="p-3.5 rounded-2xl w-full text-sm font-bold border-none outline-none ring-0 focus:ring-1 focus:ring-primary/50 placeholder:opacity-40"
                 />
             </div>
-
-            
         </div>
     );
 }

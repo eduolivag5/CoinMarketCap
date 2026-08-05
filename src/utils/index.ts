@@ -17,6 +17,38 @@ export function formatNumber(number: number | string) {
   }).format(numericValue);
 }
 
+export function formatBigNumber(number: number | string, decimals: number = 2): string {
+  const numericValue = typeof number === 'string' ? parseFloat(number) : number;
+
+  if (isNaN(numericValue)) {
+    return String(number);
+  }
+
+  const absNum = Math.abs(numericValue);
+
+  // Billones (Trillones escala corta / Billones)
+  if (absNum >= 1.0e12) {
+    return `${new Intl.NumberFormat('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(numericValue / 1.0e12)} T`;
+  }
+  // Miles de millones (Billones en español / Billions)
+  if (absNum >= 1.0e9) {
+    return `${new Intl.NumberFormat('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(numericValue / 1.0e9)} B`;
+  }
+  // Millones
+  if (absNum >= 1.0e6) {
+    return `${new Intl.NumberFormat('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(numericValue / 1.0e6)} M`;
+  }
+  // Miles
+  if (absNum >= 1.0e3) {
+    return `${new Intl.NumberFormat('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(numericValue / 1.0e3)} K`;
+  }
+
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: decimals,
+  }).format(numericValue);
+}
+
 
 export function cutFirst8Digits(input: number | string): string {
   try {

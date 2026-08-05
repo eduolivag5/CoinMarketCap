@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 import { getCriptoListInfo } from '../api/coins';
 import { PortfolioItem } from '../types';
 import Header from '../components/Portfolio/Header';
+import { HiOutlineWallet } from 'react-icons/hi2';
 
 export default function Portfolio() {
     const { transactions } = useTransactionStore();
@@ -19,7 +20,6 @@ export default function Portfolio() {
         [portfolioItems]
     );
 
-    
     const { mutate: fetchCriptoListInfo } = useMutation({
         mutationFn: getCriptoListInfo,
         onSuccess: (data) => {
@@ -41,7 +41,6 @@ export default function Portfolio() {
         }
     });
 
-    
     useEffect(() => {
         const fetchData = () => {
             if (coinIds.length > 0) {
@@ -49,33 +48,50 @@ export default function Portfolio() {
             }
         };
     
-        // Ejecutar inmediatamente cuando `coinIds` cambie
         fetchData();
-    
-        // Crear un intervalo que ejecute la función cada 20 segundos
         const intervalId = setInterval(fetchData, 20000);
     
-        // Limpiar el intervalo cuando se desmonta o cambia `coinIds`
         return () => {
             clearInterval(intervalId);
         };
     }, [coinIds, fetchCriptoListInfo]);
 
     return (
-        <div className='space-y-4'>
-            <header className='justify-between items-center flex'>
-                <h1 className='text-2xl font-bold'>Portfolio</h1>
-                <Link to={'/transactions'} className='border border-secondary px-6 py-2 rounded-lg text-sm flex items-center gap-2 hover:bg-secondary transition-colors duration-200'>
-                    <BiTransfer />
+        <div className='space-y-6 max-w-6xl mx-auto pb-16'>
+            {/* Cabecera limpia y moderna */}
+            <header className='flex justify-between items-center pb-4'>
+                <div>
+                    <span className="text-xs font-bold uppercase tracking-widest opacity-50">Gestión de activos</span>
+                    <h1 className='text-3xl font-black tracking-tight mt-1'>Portfolio</h1>
+                </div>
+                <Link 
+                    to={'/transactions'} 
+                    className='bg-secondary/15 hover:bg-secondary/25 px-5 py-2.5 rounded-2xl text-sm font-semibold flex items-center gap-2 transition-all duration-200 shadow-sm'
+                >
+                    <BiTransfer className="text-primary text-base" />
                     Ver transacciones
                 </Link>
             </header>
 
-            {/* Mostrar un spinner o indicador de carga */}
-            <div className='space-y-4'>
-                <Header portfolio={portfolioList} />
-                <PortfolioTable portfolio={portfolioList} />
-            </div>
+            {/* Contenido principal o estado vacío si no hay transacciones */}
+            {transactions.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-12 text-center rounded-3xl bg-secondary/10 space-y-4 my-12">
+                    <div className="w-16 h-16 rounded-2xl bg-secondary/30 flex items-center justify-center text-primary shadow-sm">
+                        <HiOutlineWallet className="w-8 h-8 opacity-70" />
+                    </div>
+                    <div className="space-y-1 max-w-sm">
+                        <h4 className="font-bold text-lg">Tu portfolio está vacío</h4>
+                        <p className="text-sm opacity-60 font-medium">
+                            Empieza a registrar tus transacciones de compra o venta para hacer un seguimiento detallado de tus ganancias y activos.
+                        </p>
+                    </div>
+                </div>
+            ) : (
+                <div className='space-y-6'>
+                    <Header portfolio={portfolioList} />
+                    <PortfolioTable portfolio={portfolioList} />
+                </div>
+            )}
         </div>
     );
 }

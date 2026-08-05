@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
+import { IoClose } from "react-icons/io5";
 import { searchCoins } from "../../api/coins";
 import { SearchItemType } from "../../types";
 import { useTransactionStore } from "../../store/transactions";
@@ -31,6 +32,7 @@ export default function AddTransaction({ isOpen, onClose, onConfirm, transaction
             setAmount(transaction.amount.toString());
             setPrice(transaction.price.toString());
             setDatetime(transaction.date);
+            setSearchText(transaction.coin?.symbol || '');
         }
     }, [transaction]);
 
@@ -60,7 +62,7 @@ export default function AddTransaction({ isOpen, onClose, onConfirm, transaction
     const handleSelectCoin = (coin: SearchItemType) => {
         setSelectedCoin(coin);
         setSearchText(coin.symbol || '');
-        setPrice(coin.quotes?.USD.price || '')
+        setPrice(coin.quotes?.USD.price || '');
         setResults([]);
     };
 
@@ -96,44 +98,64 @@ export default function AddTransaction({ isOpen, onClose, onConfirm, transaction
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 md:bg-black md:bg-opacity-80 flex justify-center z-50 md:p-4">
-            <div className="mt-16 rounded-lg shadow-lg p-6 md:border md:border-secondary bg-background">
-                <h2 className="text-xl font-semibold mb-4">
-                    {transaction ? 'Editar ' : 'Añadir '}
-                    transacción
-                </h2>
-                <div className="bg-secondary rounded-lg">
-                    <div className="inline-flex w-full items-center gap-4 p-3 px-6">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+            <div className="w-full max-w-lg rounded-3xl shadow-2xl p-6 md:p-8 bg-background border border-secondary/20 space-y-6 animate-in fade-in zoom-in-95 duration-200">
+                
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-xl font-bold tracking-tight">
+                            {transaction ? 'Editar transacción' : 'Añadir transacción'}
+                        </h2>
+                        <p className="text-xs opacity-60 font-medium mt-0.5">
+                            Gestiona los detalles de tu activo e inversión.
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => { handleResetForm(); onClose(); }}
+                        className="w-9 h-9 rounded-2xl bg-secondary/20 hover:bg-secondary/40 flex items-center justify-center transition-all duration-200"
+                    >
+                        <IoClose className="w-5 h-5 opacity-70" />
+                    </button>
+                </div>
+
+                {/* Buscador de Moneda */}
+                <div className="space-y-2 relative">
+                    <label className="text-xs font-bold uppercase tracking-wider opacity-60">Buscar Moneda</label>
+                    <div className="relative flex items-center bg-secondary/20 rounded-2xl px-4 py-3 border border-transparent focus-within:border-primary/50 transition-colors">
+                        <FaSearch className="w-4 h-4 opacity-40 mr-3" />
                         <input
                             type="text"
                             value={searchText}
                             onChange={handleSearchChange}
-                            placeholder="Escribe para buscar..."
-                            className="w-full text-sm focus:outline-none bg-transparent"
+                            placeholder="Busca por nombre o símbolo (ej. Bitcoin, BTC)..."
+                            className="w-full text-sm focus:outline-none bg-transparent font-medium border-none ring-0 outline-none placeholder:text-secondary-foreground/40"
                         />
-                        <FaSearch className="w-4 h-4 text-gray-500" />
                     </div>
                     
                     {results && results.length > 0 && (
-                        <div className="my-2 rounded-md space-y-3 py-2 max-h-48 overflow-y-auto">
+                        <div className="absolute left-0 right-0 top-full mt-2 rounded-2xl bg-background shadow-xl space-y-1 p-2 max-h-56 overflow-y-auto z-20 backdrop-blur-md">
                             {results.map((result) => (
                                 <button
                                     key={result.id}
                                     onClick={() => handleSelectCoin(result)}
-                                    className="flex text-xs items-center justify-between px-6 w-full"
+                                    className="flex text-xs items-center justify-between px-4 py-2.5 w-full hover:bg-secondary/20 rounded-xl transition-colors text-left"
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <img src={result.logo} alt={result.name} className="w-5 h-5 rounded-full" />
-                                        <span>{result.name}</span>
+                                    <div className="flex items-center gap-3">
+                                        <img src={result.logo} alt={result.name} className="w-7 h-7 rounded-full bg-secondary/30 p-0.5" />
+                                        <div>
+                                            <p className="font-bold">{result.name}</p>
+                                            <p className="text-[10px] uppercase opacity-50 font-semibold">{result.symbol}</p>
+                                        </div>
                                     </div>
                                     
-                                    <div className="flex items-center gap-2">
-                                        <span>
+                                    <div className="text-right">
+                                        <p className="font-bold">
                                             {result.quotes?.USD.price && `$${cutFirst8Digits(result.quotes?.USD.price)}`}
-                                        </span>
-                                        <span className={`${result.quotes?.USD.percent_change_24h && result.quotes?.USD.percent_change_24h > 0 ? 'text-positive' : 'text-negative'}`}>   
+                                        </p>
+                                        <p className={`font-bold ${result.quotes?.USD.percent_change_24h && result.quotes?.USD.percent_change_24h > 0 ? 'text-positive' : 'text-negative'}`}> 
                                             {result.quotes?.USD.percent_change_24h ? `${result.quotes?.USD.percent_change_24h.toFixed(2)}%` : '0.00%'}
-                                        </span>
+                                        </p>
                                     </div>
                                 </button>
                             ))}
@@ -141,78 +163,82 @@ export default function AddTransaction({ isOpen, onClose, onConfirm, transaction
                     )}
                 </div>
 
-                <form className="grid grid-cols-2 gap-4 mt-4" onSubmit={(e) => e.preventDefault()}>
-                    <div className="space-y-1">
-                        <label htmlFor="amount" className="text-sm">Cantidad:</label>
+                {/* Formulario de Inputs */}
+                <form className="grid grid-cols-1 md:grid-cols-2 gap-4" onSubmit={(e) => e.preventDefault()}>
+                    <div className="space-y-1.5">
+                        <label htmlFor="amount" className="text-xs font-bold uppercase tracking-wider opacity-60">Cantidad:</label>
                         <input
                             type="number"
                             id="amount"
                             value={amount}
                             onChange={(e) => setAmount(e.target.value)}
-                            className="w-full rounded-md p-2 text-sm focus:outline-none bg-secondary"
-                            placeholder="Cantidad"
+                            className="w-full rounded-2xl p-3 text-sm focus:outline-none bg-secondary/20 border-none outline-none ring-0 focus:ring-1 focus:ring-primary/50 transition-colors font-medium [color-scheme:dark] placeholder:text-secondary-foreground/40"
+                            placeholder="0.00"
                         />
                     </div>
 
-                    <div className="space-y-1">
-                        <label htmlFor="price" className="text-sm">Precio:</label>
+                    <div className="space-y-1.5">
+                        <label htmlFor="price" className="text-xs font-bold uppercase tracking-wider opacity-60">Precio unitario ($):</label>
                         <input
                             type="number"
                             id="price"
                             value={price}
                             onChange={(e) => setPrice(e.target.value)}
-                            className="w-full rounded-md p-2 text-sm focus:outline-none bg-secondary"
-                            placeholder="Precio"
+                            className="w-full rounded-2xl p-3 text-sm focus:outline-none bg-secondary/20 border-none outline-none ring-0 focus:ring-1 focus:ring-primary/50 transition-colors font-medium [color-scheme:dark] placeholder:text-secondary-foreground/40"
+                            placeholder="0.00"
                         />
                     </div>
 
-                    <div className="space-y-1">
-                        <label htmlFor="datetime" className="text-sm">Fecha:</label>
+                    <div className="space-y-1.5">
+                        <label htmlFor="datetime" className="text-xs font-bold uppercase tracking-wider opacity-60">Fecha:</label>
                         <input
                             type="date"
                             id="datetime"
                             value={datetime}
                             onChange={(e) => setDatetime(e.target.value)}
-                            className="w-full rounded-md p-2 text-sm focus:outline-none bg-secondary"
-                            placeholder="Fecha"
+                            className="w-full rounded-2xl p-3 text-sm focus:outline-none bg-secondary/20 border-none outline-none ring-0 focus:ring-1 focus:ring-primary/50 transition-colors font-medium [color-scheme:dark] [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer"
                         />
                     </div>    
 
-                    <div className="space-y-1">
-                        <label htmlFor="coin" className="text-sm">Moneda:</label>
-                        <div id="coin" className="w-full rounded-md p-2 text-sm focus:outline-none border border-secondary flex items-center gap-2">
-                            {selectedCoin && (
-                                <img src={selectedCoin.logo} alt={selectedCoin.symbol} className="w-5 h-5 rounded-full" />
-                            )}
-                            <span>{selectedCoin?.symbol || 'Selecciona una moneda'}</span>
-                        </div>
-                    </div>
-
-                    <div className="space-y-1">
-                        <label htmlFor="invested" className="text-sm">Total gastado:</label>
-                        <div id="invested" className="w-full rounded-md p-2 focus:outline-none text-lg font-bold border border-secondary flex items-center gap-2">
-                            {price ? (
-                                <span>
-                                    {`$${Number(price) * Number(amount)}`}
-                                </span>
+                    <div className="space-y-1.5">
+                        <label className="text-xs font-bold uppercase tracking-wider opacity-60">Moneda seleccionada:</label>
+                        <div className="w-full rounded-2xl p-2.5 text-sm border-none bg-secondary/10 flex items-center gap-3">
+                            {selectedCoin ? (
+                                <>
+                                    <img src={selectedCoin.logo} alt={selectedCoin.symbol} className="w-7 h-7 rounded-full bg-secondary/30 p-0.5" />
+                                    <div>
+                                        <p className="font-bold leading-tight">{selectedCoin.name}</p>
+                                        <p className="text-[10px] uppercase opacity-50 font-semibold">{selectedCoin.symbol}</p>
+                                    </div>
+                                </>
                             ) : (
-                                <span>0.00</span>
-                            )}                            
+                                <span className="text-xs opacity-50 font-medium px-2">Ninguna seleccionada</span>
+                            )}
                         </div>
                     </div>
 
+                    <div className="col-span-full space-y-1.5 pt-2">
+                        <label className="text-xs font-bold uppercase tracking-wider opacity-60">Total gastado (Inversión)</label>
+                        <div className="w-full rounded-2xl px-4 py-3 bg-secondary/30 border-none flex items-center justify-between">
+                            <span className="text-xs opacity-60 font-medium">Cálculo automático</span>
+                            <span className="text-lg font-bold tracking-tight">
+                                {price && amount ? `$${(Number(price) * Number(amount)).toFixed(2)}` : '$0.00'}
+                            </span>
+                        </div>
+                    </div>
                 </form>
 
-                <div className="flex text-sm justify-end gap-4 mt-4">
+                {/* Botones de Acción */}
+                <div className="flex items-center justify-end gap-3 pt-2">
                     <button
                         onClick={() => { handleResetForm(); onClose(); }}
-                        className="px-4 py-2 border border-primary rounded-md"
+                        className="px-5 py-2.5 rounded-2xl font-bold text-xs bg-secondary/30 hover:bg-secondary/50 transition-all duration-200 border-none"
                     >
                         Cancelar
                     </button>
                     <button
                         onClick={handleAddTransaction}
-                        className="px-4 py-2 bg-primary rounded-md"
+                        className="px-6 py-2.5 rounded-2xl font-bold text-xs bg-primary text-white hover:opacity-90 transition-all duration-200 shadow-md shadow-primary/25 border-none"
                     >
                         Confirmar
                     </button>

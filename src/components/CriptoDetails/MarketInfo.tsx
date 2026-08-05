@@ -1,9 +1,7 @@
 import type { QuoteSchemaType } from "../../types"
 import { formatMarketCap } from "../../utils"
 
-
 export default function MarketInfo({ quotes } : {quotes: QuoteSchemaType}) {
-
     const marketsDetails = [
         {
             title: 'Capitalización de mercado',
@@ -32,12 +30,12 @@ export default function MarketInfo({ quotes } : {quotes: QuoteSchemaType}) {
     ]
 
     return (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3">
             {marketsDetails.map((market) => (
                 <div key={market.title} 
-                    className='flex flex-col items-center justify-center text-center rounded-lg text-sm p-2 gap-1 bg-secondary'>
-                    <p className='text-xs'>{market.title}</p>
-                    <p className="font-semibold">{market.value}</p>
+                    className='flex flex-col items-center justify-center text-center rounded-2xl text-sm p-3 gap-1 bg-secondary transition-colors'>
+                    <p className='text-xs opacity-60 font-medium'>{market.title}</p>
+                    <p className="font-bold tracking-tight">{market.value}</p>
                 </div>
             ))}
         </div>

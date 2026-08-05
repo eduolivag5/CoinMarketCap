@@ -5,8 +5,6 @@ import { useQuery } from "@tanstack/react-query";
 import Loading from "../components/Loading";
 import MainDetails from "../components/CriptoDetails/MainDetails";
 
-
-
 export default function CriptoDetails() {
     const { id } = useParams<{ id: string }>();
     const { data, isError, isLoading } = useQuery({
@@ -16,21 +14,24 @@ export default function CriptoDetails() {
     });    
 
     return (
-        <div>
-            {isError && <div>Error al cargar los datos</div>}
-            {isLoading && <Loading />}
+        <div className="w-full">
+            {isError && <div className="py-12 text-center opacity-60 font-medium">Error al cargar los datos</div>}
+            {isLoading && (
+                <div className="py-16 flex justify-center">
+                    <Loading />
+                </div>
+            )}
 
             {data && 
-                <div className="flex flex-col md:flex-row gap-4">
-                    <div className="w-full md:w-96 md:min-w-96">
+                <div className="flex flex-col md:flex-row gap-6">
+                    <div className="w-full md:w-[420px] md:min-w-[420px]">
                         <Sidebar data={data} />
                     </div>
-                    <div className="hidden md:block">
+                    <div className="hidden md:block flex-1 bg-secondary/10 p-6 rounded-3xl">
                         <MainDetails data={data} />
                     </div>
                 </div>
             }
-            
         </div>
     );
 }

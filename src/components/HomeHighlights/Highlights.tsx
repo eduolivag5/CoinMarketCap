@@ -45,47 +45,54 @@ export default function Highlights() {
                                     checked={showHighlights}
                                     onChange={toggleHighlights}
                                 />
-                                <div className={`w-11 h-6 rounded-full ${showHighlights ? 'bg-primary' : 'bg-secondary'}`}></div>
+                                {/* Añadida transición de color suave */}
+                                <div className={`w-11 h-6 rounded-full transition-colors duration-300 ${showHighlights ? 'bg-primary' : 'bg-secondary'}`}></div>
                                 <span
-                                className={`absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition transform duration-200 ease-in-out ${
-                                    showHighlights ? 'translate-x-5' : ''
+                                className={`absolute left-0.5 top-0.5 w-5 h-5 bg-white rounded-full transition-transform duration-300 ease-in-out ${
+                                    showHighlights ? 'translate-x-5' : 'translate-x-0'
                                 }`}></span>
                             </label>
                         <span className="text-sm font-semibold">Mostrar</span>
                     </div>
                 </div>
                 
-                {showHighlights && (
-                    <div id="homeHighlights" className="flex flex-col md:flex-row gap-4 font-semibold">
-                        <div className="flex-1 p-4 rounded-lg border-2 border-secondary flex flex-col">
-                            <div className="mb-4 flex justify-between items-center">
-                                <span>Fear And Greed Index</span>
-                                <Tooltip 
-                                    title="El Fear And Greed Index mide el nivel de miedo o avaricia en el mercado cripto. Se calcula con datos como el volumen de trading y la capitalización total del mercado, mostrando un valor que refleja la incertidumbre y el riesgo." 
-                                    arrow
-                                >
-                                    <button>
-                                        <FaRegQuestionCircle className="w-4 h-4 text-primary" />
-                                    </button>
-                                </Tooltip>
+                {/* Contenedor con animación fluida de despliegue, opacidad y escala */}
+                <div className={`grid transition-all duration-300 ease-in-out ${
+                    showHighlights 
+                        ? 'grid-rows-[1fr] opacity-100 translate-y-0' 
+                        : 'grid-rows-[0fr] opacity-0 -translate-y-2 pointer-events-none'
+                }`}>
+                    <div className="overflow-hidden">
+                        <div id="homeHighlights" className="flex flex-col md:flex-row gap-4 font-semibold pt-1">
+                            <div className="flex-1 p-4 rounded-lg border-2 border-secondary flex flex-col">
+                                <div className="mb-4 flex justify-between items-center">
+                                    <span>Fear And Greed Index</span>
+                                    <Tooltip 
+                                        title="El Fear And Greed Index mide el nivel de miedo o avaricia en el mercado cripto. Se calcula con datos como el volumen de trading y la capitalización total del mercado, mostrando un valor que refleja la incertidumbre y el riesgo." 
+                                        arrow
+                                    >
+                                        <button>
+                                            <FaRegQuestionCircle className="w-4 h-4 text-primary" />
+                                        </button>
+                                    </Tooltip>
+                                </div>
+                                <div className="flex-1 flex items-center justify-center">
+                                    <FearAndGreedIndex value={dataFearAndGreed.value} classification={dataFearAndGreed.value_classification} />
+                                </div>
+                            </div>
 
+                            <div className="flex-1 p-4 rounded-lg border-2 border-secondary">
+                                <div className="mb-4 flex justify-between items-center">
+                                    <span>Métricas globales</span>
+                                    <Link to="/global-metrics" className="text-sm text-primary">
+                                        Ver más
+                                    </Link>
+                                </div>
+                                <GlobalMetrics prices={dataGlobalMetrics.quote.USD} />
                             </div>
-                            <div className="flex-1 flex items-center justify-center">
-                                <FearAndGreedIndex value={dataFearAndGreed.value} classification={dataFearAndGreed.value_classification} />
-                            </div>
-                        </div>
-
-                        <div className="flex-1 p-4 rounded-lg border-2 border-secondary">
-                            <div className="mb-4 flex justify-between items-center">
-                                <span>Métricas globales</span>
-                                <Link to="/global-metrics" className="text-sm text-primary">
-                                    Ver más
-                                </Link>
-                            </div>
-                            <GlobalMetrics prices={dataGlobalMetrics.quote.USD} />
                         </div>
                     </div>
-                )}
+                </div>
             </div>
             )}
         </div>
